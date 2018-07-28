@@ -1,0 +1,35 @@
+{
+  "name": "galexth/elasticsearch-querybuilder",
+  "description": "elasticsearch querybuilder",
+  "keywords": ["elasticsearch", "querybuilder"],
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Alexander G"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.3",
+    "illuminate/support": "~5.6",
+    "ruflin/elastica": "^6.0"
+  },
+  "require-dev": {
+    "mockery/mockery": "~1.0",
+    "phpunit/phpunit": "~7.0",
+    "fzaninotto/faker": "~1.6",
+    "kint-php/kint": "^2.1",
+    "monolog/monolog": "^1.22",
+    "illuminate/validation": "~5.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Galexth\\QueryBuilder\\": "src/elasticsearch-querybuilder/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Galexth\\QueryBuilder\\Tests\\": "tests/elasticsearch-querybuilder/Tests/"
+    }
+  }
+}
