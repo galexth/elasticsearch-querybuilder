@@ -2,8 +2,8 @@
 
 namespace Galexth\QueryBuilder\Tests;
 
-use Galexth\Builder\Builder;
-use Galexth\Builder\Tests\Rules\Prospect;
+use Galexth\QueryBuilder\Builder;
+use Galexth\QueryBuilder\Tests\Rules\Prospect;
 
 final class ParseTest extends TestCase
 {

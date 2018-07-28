@@ -2,7 +2,7 @@
 
 namespace Galexth\QueryBuilder\Types;
 
-use Galexth\Builder\AbstractType;
+use Galexth\QueryBuilder\AbstractType;
 
 class Text extends AbstractType
 {

@@ -2,7 +2,7 @@
 
 namespace Galexth\QueryBuilder\Tests\Rules;
 
-use Galexth\Builder\Rule;
+use Galexth\QueryBuilder\Rule;
 
 class Prospect implements Rule
 {

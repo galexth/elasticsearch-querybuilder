@@ -5,14 +5,14 @@ namespace Galexth\QueryBuilder;
 class Builder
 {
     /**
-     * @var \Galexth\Builder\Rule
+     * @var \Galexth\QueryBuilder\Rule
      */
     protected $rule;
 
     /**
      * Parser constructor.
      *
-     * @param \Galexth\Builder\Rule $rule
+     * @param \Galexth\QueryBuilder\Rule $rule
      */
     public function __construct(Rule $rule)
     {
@@ -70,7 +70,7 @@ class Builder
     /**
      * @param string $expression
      *
-     * @return \Galexth\Builder\Expression|string
+     * @return \Galexth\QueryBuilder\Expression|string
      * @throws \Exception
      */
     private function parseExpression(string $expression)
