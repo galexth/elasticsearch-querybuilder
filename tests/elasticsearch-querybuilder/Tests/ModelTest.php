@@ -2,23 +2,63 @@
 
 namespace Galexth\QueryBuilder\Tests;
 
+use Elastica\Query\BoolQuery;
 use Galexth\QueryBuilder\Builder;
 use Galexth\QueryBuilder\Tests\Rules\Prospect;
 
 final class ParseTest extends TestCase
 {
 
-    public function testParse()
+    public function testParse1()
     {
-        $query = ['query', 'or', 'query', 'or', 'query', 'and', 'query'];
+        $query = '@name is John and @industry is Medicine';
 
-//        $query = '@name is dsf OR (@name has and AND @industry is "rty(tr), cxvcv" OR (@name has "and" AND @industry is "rtytr")) AND @name is "axe" AND @industry has "asd or , dfg" OR (@name has "vxv" AND @industry is "rtytr") AND @name is "axe" OR (@asd has sdff AND (@dsfdsf is xvbvc OR @dsf is fds)) AND @sd is dsf';
-        $query = '@name is dsf and (@industry is edmpty)';
-        $query = '@name is dsf and @industry is not aaa and @tags has ddd, hhh and @industry is not empty or @name is bbb or (@name is ccc and @industry is nnnnn and (@industry is oooooo)) and @industry is vvvvv and (@name is pppp and @industry is zzzz)';
-//        $query = '@name is "axe" AND @industry has "asd, dfg" OR (@name has vxv AND @industry is rtytr)';
         $builder = new Builder(new Prospect);
 
-        d(json_encode($builder->run($query)->toArray()));
+        $bool = $builder->run($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
+
+    public function testParse2()
+    {
+        $query = '@name is "John" and @industry is \'Medicine\'';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->run($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
+
+    public function testParse3()
+    {
+        $query = '@name is "John" and @industry is \'Medicine\' or (@industry is Oil and @name is Chris) or @name is Jesus';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->run($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
+
+    public function testParse4()
+    {
+        $query = '@name is "John" and @industry is \'Medicine\' or @tags has 12,13';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->run($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
     }
 
 }
