@@ -22,7 +22,9 @@ class Prospect implements Rule
             'tags' => [
                 'query_type' => 'terms',
                 'fields' => 'tags.name',
-                'nested' => 'tags',
+                'nested' => [
+                    'path' => 'tags'
+                ],
                 'type' => 'text',
             ]
         ];

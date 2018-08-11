@@ -71,7 +71,7 @@ class Builder
                 $query = call_user_func_array([$type, $method], [$item, $pattern]);
 
                 if (isset($pattern['nested'])) {
-                    $query = $type->nest($pattern['nested'], $query);
+                    $query = $type->nest($pattern['nested']['path'], $query);
                 }
 
                 $operandPair[] = $query;
