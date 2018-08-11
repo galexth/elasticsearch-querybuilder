@@ -54,11 +54,7 @@ class Text extends AbstractType
      */
     public function has(Expression $expression, array $pattern)
     {
-        $values = array_map(function ($value) {
-            return trim($value);
-        }, preg_split('/\s+,\s+/', $expression->values));
-
-        return $this->callMethod($pattern['query_type'], $expression->operand, $values);
+        return $this->callMethod($pattern['query_type'], $expression->operand, $expression->values);
     }
 
     /**
@@ -126,7 +122,9 @@ class Text extends AbstractType
      */
     protected function getTermsQuery(string $name, $values)
     {
-        $values = (array) $values;
+        $values = array_map(function ($value) {
+            return trim($value);
+        }, preg_split('/\s*+,\s*+/', $values));
 
         if (count($values) > 1) {
             return new Terms($name, $values);

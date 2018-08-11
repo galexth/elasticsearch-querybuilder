@@ -3,6 +3,9 @@
 namespace Galexth\QueryBuilder;
 
 
+use Elastica\Query\AbstractQuery;
+use Elastica\Query\Nested;
+
 abstract class AbstractType
 {
     /**
@@ -25,5 +28,18 @@ abstract class AbstractType
     protected function callMethod(string $queryType, string $operand, $values)
     {
         return call_user_func_array([$this, $this->getMethod($queryType)], [$operand, $values]);
+    }
+
+    /**
+     * @param string                        $path
+     * @param \Elastica\Query\AbstractQuery $query
+     *
+     * @return \Elastica\Query\Nested
+     */
+    public function nest(string $path, AbstractQuery $query)
+    {
+        $nested = new Nested();
+        $nested->setPath($path);
+        return $nested->setQuery($query);
     }
 }

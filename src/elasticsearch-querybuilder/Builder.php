@@ -68,7 +68,13 @@ class Builder
                     throw new \Exception("Unknown operator '{$item->operator}' in type '{$pattern['type']}'.");
                 }
 
-                $operandPair[] = call_user_func_array([$type, $method], [$item, $pattern]);
+                $query = call_user_func_array([$type, $method], [$item, $pattern]);
+
+                if (isset($pattern['nested'])) {
+                    $query = $type->nest($pattern['nested'], $query);
+                }
+
+                $operandPair[] = $query;
 
                 if ($lastOperator) {
 
