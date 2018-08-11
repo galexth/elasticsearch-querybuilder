@@ -11,10 +11,6 @@ class Builder
      */
     protected $rule;
 
-    protected $or = [];
-
-    protected $and = [];
-
     /**
      * Parser constructor.
      *
@@ -47,6 +43,10 @@ class Builder
      */
     private function buildQuery(array $terms, string $lastOperator = null)
     {
+        if (! $lastOperator && count($terms) == 1) {
+            $lastOperator = 'and';
+        }
+
         $bool = new BoolQuery();
         $operandPair = [];
         $patterns = $this->rule::patterns();
@@ -80,12 +80,17 @@ class Builder
                     $lastOperator = null;
                 }
             } elseif (is_array($item)) {
-                $query = $this->buildQuery($item, count($item) == 1 ? $lastOperator : null);
+                $operandPair[] = $this->buildQuery($item, count($item) == 1 ? $lastOperator : null);
 
-                $bool->{$this->getBoolType($lastOperator)}($query);
+                if ($lastOperator) {
 
-                $operandPair = [];
-                $lastOperator = null;
+                    foreach ($operandPair as $operand) {
+                        $bool->{$this->getBoolType($lastOperator)}($operand);
+                    }
+
+                    $operandPair = [];
+                    $lastOperator = null;
+                }
             } else {
                 $lastOperator = $item;
             }

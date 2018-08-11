@@ -43,8 +43,7 @@ class Text extends AbstractType
      */
     public function isEmpty(Expression $expression, array $pattern)
     {
-        $bool = new BoolQuery();
-        return $bool->addMustNot($this->isNotEmpty($expression, $pattern));
+        return $this->not($expression, $pattern, 'is not empty');
     }
 
     /**
@@ -70,7 +69,7 @@ class Text extends AbstractType
      */
     public function isNot(Expression $expression, array $pattern)
     {
-        return $this->not($expression, $pattern);
+        return $this->not($expression, $pattern, 'is');
     }
 
     /**
@@ -81,19 +80,20 @@ class Text extends AbstractType
      */
     public function hasNot(Expression $expression, array $pattern)
     {
-        return $this->not($expression, $pattern);
+        return $this->not($expression, $pattern, 'has');
     }
 
     /**
      * @param \Galexth\QueryBuilder\Expression $expression
      * @param array                            $pattern
+     * @param string                           $method
      *
      * @return \Elastica\Query\BoolQuery
      */
-    public function not(Expression $expression, array $pattern)
+    public function not(Expression $expression, array $pattern, string $method)
     {
         $bool = new BoolQuery();
-        return $bool->addMustNot($this->{camel_case($expression->operator)}($expression, $pattern));
+        return $bool->addMustNot($this->{$method}($expression, $pattern));
     }
 
     /**

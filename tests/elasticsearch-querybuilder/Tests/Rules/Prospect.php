@@ -18,6 +18,12 @@ class Prospect implements Rule
                 'query_type' => 'match',
                 'fields' => 'industry',
                 'type' => 'text',
+            ],
+            'tags' => [
+                'query_type' => 'terms',
+                'fields' => 'tags.name',
+                'nested' => 'tags',
+                'type' => 'text',
             ]
         ];
     }
