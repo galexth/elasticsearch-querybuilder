@@ -198,7 +198,7 @@ class Builder
      */
     private function removeQuotes(string $values)
     {
-        preg_match('/(?<=^")(.+)(?="$)/', $values, $matches);
+        preg_match('/(?<=["\'])(.+)(?=["\']$)/', $values, $matches);
 
         return $matches[1] ?? $values;
     }
