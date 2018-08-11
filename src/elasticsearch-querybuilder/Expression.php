@@ -25,7 +25,7 @@ class Expression
      * @param string $operator
      * @param array  $values
      */
-    public function __construct(string $operand, string $operator, string $values)
+    public function __construct(string $operand, string $operator, ?string $values)
     {
         $this->operand = $operand;
         $this->operator = $operator;

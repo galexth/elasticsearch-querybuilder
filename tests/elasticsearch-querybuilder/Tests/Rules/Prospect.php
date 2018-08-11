@@ -13,6 +13,11 @@ class Prospect implements Rule
                 'query_type' => 'match',
                 'fields' => 'name',
                 'type' => 'text',
+            ],
+            'industry' => [
+                'query_type' => 'match',
+                'fields' => 'industry',
+                'type' => 'text',
             ]
         ];
     }

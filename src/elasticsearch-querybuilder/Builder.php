@@ -2,12 +2,18 @@
 
 namespace Galexth\QueryBuilder;
 
+use Elastica\Query\BoolQuery;
+
 class Builder
 {
     /**
      * @var \Galexth\QueryBuilder\Rule
      */
     protected $rule;
+
+    protected $or = [];
+
+    protected $and = [];
 
     /**
      * Parser constructor.
@@ -22,13 +28,91 @@ class Builder
     /**
      * @param string $query
      *
-     * @return array
+     * @return \Elastica\Query\BoolQuery
+     * @throws \Exception
      */
     public function run(string $query)
     {
-        return $this->parse($query);
+        $parsed = $this->parse($query);
 
-        //@todo
+        return $this->buildQuery($parsed);
+    }
+
+    /**
+     * @param array       $terms
+     * @param string|null $lastOperator
+     *
+     * @return \Elastica\Query\BoolQuery
+     * @throws \Exception
+     */
+    private function buildQuery(array $terms, string $lastOperator = null)
+    {
+        $bool = new BoolQuery();
+        $operandPair = [];
+        $patterns = $this->rule::patterns();
+        foreach ($terms as $key => $item) {
+            if ($key % 2 && ! in_array($item, ['and', 'or'])) {
+                throw new \Exception('Wrong sequence.');
+            }
+
+            if ($item instanceof Expression) {
+                if (! isset($patterns[$item->operand])) {
+                    throw new \Exception("Unknown operand '{$item->operand}'.");
+                }
+
+                $pattern = $patterns[$item->operand];
+
+                $type = $this->getTypeObject($pattern['type']);
+
+                if (! method_exists($type, ($method = camel_case($item->operator)))) {
+                    throw new \Exception("Unknown operator '{$item->operator}' in type '{$pattern['type']}'.");
+                }
+
+                $operandPair[] = call_user_func_array([$type, $method], [$item, $pattern]);
+
+                if ($lastOperator) {
+
+                    foreach ($operandPair as $operand) {
+                        $bool->{$this->getBoolType($lastOperator)}($operand);
+                    }
+
+                    $operandPair = [];
+                    $lastOperator = null;
+                }
+            } elseif (is_array($item)) {
+                $query = $this->buildQuery($item, count($item) == 1 ? $lastOperator : null);
+
+                $bool->{$this->getBoolType($lastOperator)}($query);
+
+                $operandPair = [];
+                $lastOperator = null;
+            } else {
+                $lastOperator = $item;
+            }
+        }
+
+        return $bool;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return mixed
+     */
+    private function getTypeObject(string $type)
+    {
+        $class = 'Galexth\QueryBuilder\Types\\' . $type;
+
+        return new $class;
+    }
+    /**
+     * @param string $operator
+     *
+     * @return string
+     */
+    private function getBoolType(string $operator)
+    {
+        return $operator == 'and' ? 'addMust' : 'addShould';
     }
 
     /**
@@ -38,7 +122,13 @@ class Builder
      */
     private function parse(string $query)
     {
-        $query = preg_replace('/^\(|\)$/', '', strtolower(trim($query)));
+        $query = strtolower(trim($query));
+
+        if (preg_match('/^\(.+\)$/', $query)) {
+            $query = substr($query, 1, -1);
+        }
+
+        $query = preg_replace('/^\((?:.+)\)$/', '', $query);
 
         $pattern = '/\(\s*+@.+?\)+(?=\s+(?:and|or))|\(\s*+@.+?\)+$/';
 
@@ -48,6 +138,7 @@ class Builder
             $replaced[] = $matches[0];
             return '{$' . count($replaced) . '}';
         }, $query);
+
 
         $pattern = '/(and|or)(?=\s+(?:@|{\$\d}))/';
 
@@ -75,13 +166,18 @@ class Builder
      */
     private function parseExpression(string $expression)
     {
-        preg_match('/@(\w+)\s+(has|is)\s+(.+)/', $expression, $matches);
+        preg_match('/@(\w+)\s+(?:(is not empty|is empty)$|((?:has|is)(?:\s+not)?)\s+(.+))/', $expression, $matches);
 
-        if (count($matches) < 4) {
+        //@todo unexpected result
+        $matches = array_values(array_filter($matches));
+
+        if (count($matches) < 3) {
             throw new \Exception('Wrong number of segments.');
         }
 
-        return new Expression($matches[1], $matches[2], $this->removeQuotes($matches[3]));
+        $values = isset($matches[3]) ? $this->removeQuotes($matches[3]) : null;
+
+        return new Expression($matches[1], $matches[2], $values);
     }
 
     /**
