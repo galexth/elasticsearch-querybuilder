@@ -15,7 +15,7 @@ final class ParseTest extends TestCase
 
         $builder = new Builder(new Prospect);
 
-        $bool = $builder->run($query);
+        $bool = $builder->build($query);
 
         $this->assertTrue($bool instanceof BoolQuery);
 
@@ -28,7 +28,7 @@ final class ParseTest extends TestCase
 
         $builder = new Builder(new Prospect);
 
-        $bool = $builder->run($query);
+        $bool = $builder->build($query);
 
         $this->assertTrue($bool instanceof BoolQuery);
 
@@ -41,7 +41,7 @@ final class ParseTest extends TestCase
 
         $builder = new Builder(new Prospect);
 
-        $bool = $builder->run($query);
+        $bool = $builder->build($query);
 
         $this->assertTrue($bool instanceof BoolQuery);
 
@@ -54,11 +54,36 @@ final class ParseTest extends TestCase
 
         $builder = new Builder(new Prospect);
 
-        $bool = $builder->run($query);
+        $bool = $builder->build($query);
 
         $this->assertTrue($bool instanceof BoolQuery);
 
         d($bool->toArray());
     }
 
+    public function testParse5()
+    {
+        $query = '@name is John';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
+
+    public function testParse6()
+    {
+        $query = '@name is John and (@industry is Medicine)';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
 }

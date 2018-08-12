@@ -7,5 +7,5 @@ interface Rule
     /**
      * @return array
      */
-    public static function patterns(): array;
+    public function patterns(): array;
 }

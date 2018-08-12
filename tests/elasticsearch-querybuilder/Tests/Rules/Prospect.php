@@ -6,7 +6,7 @@ use Galexth\QueryBuilder\Rule;
 
 class Prospect implements Rule
 {
-    public static function patterns(): array
+    public function patterns(): array
     {
         return [
             'name' => [

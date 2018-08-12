@@ -27,11 +27,82 @@ class Builder
      * @return \Elastica\Query\BoolQuery
      * @throws \Exception
      */
-    public function run(string $query)
+    public function build(string $query)
     {
-        $parsed = $this->parse($query);
+        $terms = $this->parse(strtolower($query));
 
-        return $this->buildQuery($parsed);
+        return $this->buildQuery($terms, count($terms) == 1 ? 'and' : null);
+    }
+
+    /**
+     * @param string $query
+     *
+     * @return array
+     */
+    private function parse(string $query)
+    {
+        $query = trim($query);
+
+        // Removes () from start and end of a query
+        if (preg_match('/^\(.+\)$/', $query)) {
+            $query = substr($query, 1, -1);
+        }
+
+        $pattern = '/\(\s*+@.+?\)+(?=\s+(?:and|or))|\(\s*+@.+?\)+$/';
+
+        $replaced = [];
+
+        // Replaces expressions into brackets by short codes {$1-9}
+        // to parse it recursively
+        $result = preg_replace_callback($pattern, function ($matches) use (&$replaced) {
+            $replaced[] = $matches[0];
+            return '{$' . count($replaced) . '}';
+        }, $query);
+
+
+        $pattern = '/(and|or)(?=\s+(?:@|{\$\d}))/';
+
+        // Spits query by and|or
+        $parts = preg_split($pattern, $result, -1, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
+
+        // Replaces the short codes created previously
+        return array_map(function ($item) use ($replaced) {
+
+            // parse expressions under short codes separately
+            if (preg_match('/{\$(\d+)}/', $item, $matches)) {
+                return $this->parse($replaced[$matches[1] - 1]);
+            }
+
+            if (! in_array($item, ['or', 'and'])) {
+                $item = $this->parseExpression(trim($item));
+            }
+
+            return $item;
+
+        }, $parts);
+    }
+
+    /**
+     * Turns 'name has John' into an Expression object
+     * @param string $expression
+     *
+     * @return \Galexth\QueryBuilder\Expression|string
+     * @throws \Exception
+     */
+    private function parseExpression(string $expression)
+    {
+        preg_match('/@(\w+)\s+(?:(is not empty|is empty)$|((?:has|is)(?:\s+not)?)\s+(.+))/', $expression, $matches);
+
+        //@todo unexpected result
+        $matches = array_values(array_filter($matches));
+
+        if (count($matches) < 3) {
+            throw new \Exception('Wrong number of segments.');
+        }
+
+        $values = isset($matches[3]) ? $this->removeQuotes($matches[3]) : null;
+
+        return new Expression($matches[1], $matches[2], $values);
     }
 
     /**
@@ -43,13 +114,10 @@ class Builder
      */
     private function buildQuery(array $terms, string $lastOperator = null)
     {
-        if (! $lastOperator && count($terms) == 1) {
-            $lastOperator = 'and';
-        }
-
         $bool = new BoolQuery();
         $operandPair = [];
-        $patterns = $this->rule::patterns();
+        $patterns = $this->rule->patterns();
+
         foreach ($terms as $key => $item) {
             if ($key % 2 && ! in_array($item, ['and', 'or'])) {
                 throw new \Exception('Wrong sequence.');
@@ -127,71 +195,8 @@ class Builder
     }
 
     /**
-     * @param string $query
+     * Removed the quotes ",' from start and end of a value
      *
-     * @return array
-     */
-    private function parse(string $query)
-    {
-        $query = strtolower(trim($query));
-
-        if (preg_match('/^\(.+\)$/', $query)) {
-            $query = substr($query, 1, -1);
-        }
-
-        $query = preg_replace('/^\((?:.+)\)$/', '', $query);
-
-        $pattern = '/\(\s*+@.+?\)+(?=\s+(?:and|or))|\(\s*+@.+?\)+$/';
-
-        $replaced = [];
-
-        $result = preg_replace_callback($pattern, function ($matches) use (&$replaced) {
-            $replaced[] = $matches[0];
-            return '{$' . count($replaced) . '}';
-        }, $query);
-
-
-        $pattern = '/(and|or)(?=\s+(?:@|{\$\d}))/';
-
-        $parts = preg_split($pattern, $result, -1, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
-
-        return array_map(function ($item) use ($replaced) {
-
-            if (preg_match('/{\$(\d+)}/', $item, $matches)) {
-                return $this->parse($replaced[$matches[1] - 1]);
-            }
-
-            if (! in_array($item, ['or', 'and'])) {
-                $item = $this->parseExpression(trim($item));
-            }
-
-            return $item;
-        }, $parts);
-    }
-
-    /**
-     * @param string $expression
-     *
-     * @return \Galexth\QueryBuilder\Expression|string
-     * @throws \Exception
-     */
-    private function parseExpression(string $expression)
-    {
-        preg_match('/@(\w+)\s+(?:(is not empty|is empty)$|((?:has|is)(?:\s+not)?)\s+(.+))/', $expression, $matches);
-
-        //@todo unexpected result
-        $matches = array_values(array_filter($matches));
-
-        if (count($matches) < 3) {
-            throw new \Exception('Wrong number of segments.');
-        }
-
-        $values = isset($matches[3]) ? $this->removeQuotes($matches[3]) : null;
-
-        return new Expression($matches[1], $matches[2], $values);
-    }
-
-    /**
      * @param string $values
      *
      * @return string
