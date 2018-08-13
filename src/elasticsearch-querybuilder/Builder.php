@@ -91,7 +91,11 @@ class Builder
      */
     private function parseExpression(string $expression)
     {
-        preg_match('/@(\w+)\s+(?:(is not empty|is empty)$|((?:has|is|lt|lte|gt|gte|between)(?:\s+not)?)\s+(.+))/', $expression, $matches);
+        preg_match(
+            '/@([\w.]+)\s+(?:(is not empty|is empty)$|((?:has|is|lt|lte|gt|gte|between)(?:\s+not)?)\s+(.+))/',
+            $expression,
+            $matches
+        );
 
         //@todo unexpected result
         $matches = array_values(array_filter($matches));
@@ -116,7 +120,6 @@ class Builder
     {
         $bool = new BoolQuery();
         $operandPair = [];
-        $patterns = $this->rule->patterns();
 
         foreach ($terms as $key => $item) {
             if ($key % 2 && ! in_array($item, ['and', 'or'])) {
@@ -124,11 +127,7 @@ class Builder
             }
 
             if ($item instanceof Expression) {
-                if (! isset($patterns[$item->operand])) {
-                    throw new \Exception("Unknown operand '{$item->operand}'.");
-                }
-
-                $pattern = $patterns[$item->operand];
+                $pattern = $this->getPattern($item->operand);
 
                 $type = $this->getTypeObject($pattern['type']);
 
@@ -171,6 +170,36 @@ class Builder
         }
 
         return $bool;
+    }
+
+    /**
+     * @param string $operand
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    private function getPattern(string $operand)
+    {
+        foreach ($this->rule->patterns() as $pattern) {
+            if (isset($pattern['expression']) && preg_match("/{$pattern['name']}/", $operand, $matches)) {
+                // Check for sub fields inside of an expression
+                // and resolve actual fields if 'expression' is set
+                foreach ($matches as $key => $match) {
+                    if (is_string($key)) {
+                        foreach ($pattern['fields'] as &$field) {
+                            $field = str_replace("{{$key}}", $match, $field);
+                        }
+                    }
+                }
+                return $pattern;
+            }
+
+            if ($operand == $pattern['name']) {
+                return $pattern;
+            }
+        }
+
+        throw new \Exception("Unknown operand '{$operand}'.");
     }
 
     /**

@@ -131,6 +131,7 @@ abstract class AbstractType
      * @param       $values
      *
      * @return \Elastica\Query\Range
+     * @throws \Exception
      */
     protected function getRangeQuery(array $pattern, $values)
     {
@@ -147,5 +148,16 @@ abstract class AbstractType
         }
 
         return new Range($pattern['fields'][0], $values);
+    }
+
+    /**
+     * @param array $pattern
+     * @param       $values
+     *
+     * @return mixed
+     */
+    protected function getCustomQuery(array $pattern, $values)
+    {
+        return call_user_func($pattern['callback'], $values);
     }
 }

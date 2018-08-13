@@ -125,4 +125,43 @@ final class ParseTest extends TestCase
 
         d($bool->toArray());
     }
+
+    public function testParse10()
+    {
+        $query = '@location.country has asds';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
+
+    public function testParse11()
+    {
+        $query = '@rank.alexa is 15';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
+
+    public function testParse12()
+    {
+        $query = '@persona is 15';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
 }
