@@ -9,19 +9,24 @@ class Prospect implements Rule
     public function patterns(): array
     {
         return [
+            'keywords' => [
+                'query_type' => 'multi_match',
+                'fields' => ['name', 'first_name', 'last_name'],
+                'type' => 'text',
+            ],
             'name' => [
                 'query_type' => 'match',
-                'fields' => 'name',
+                'fields' => ['name'],
                 'type' => 'text',
             ],
             'industry' => [
                 'query_type' => 'match',
-                'fields' => 'industry',
+                'fields' => ['industry'],
                 'type' => 'text',
             ],
             'tags' => [
                 'query_type' => 'terms',
-                'fields' => 'tags.name',
+                'fields' => ['tags.name'],
                 'nested' => [
                     'path' => 'tags'
                 ],

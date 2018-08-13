@@ -6,6 +6,7 @@ use Elastica\Query\BoolQuery;
 use Elastica\Query\Exists;
 use Elastica\Query\Match;
 use Elastica\Query\MatchPhrase;
+use Elastica\Query\MultiMatch;
 use Elastica\Query\Term;
 use Elastica\Query\Terms;
 use Galexth\QueryBuilder\AbstractType;
@@ -21,7 +22,7 @@ class Text extends AbstractType
      */
     public function is(Expression $expression, array $pattern)
     {
-        return $this->callMethod($pattern['query_type'], $expression->operand, $expression->values);
+        return $this->callMethod($pattern['query_type'], $pattern, $expression->values);
     }
 
     /**
@@ -32,7 +33,7 @@ class Text extends AbstractType
      */
     public function isNotEmpty(Expression $expression, array $pattern)
     {
-        return $this->callMethod('exists', $expression->operand, $expression->values);
+        return $this->callMethod('exists', $pattern, $expression->values);
     }
 
     /**
@@ -54,7 +55,7 @@ class Text extends AbstractType
      */
     public function has(Expression $expression, array $pattern)
     {
-        return $this->callMethod($pattern['query_type'], $expression->operand, $expression->values);
+        return $this->callMethod($pattern['query_type'], $pattern, $expression->values);
     }
 
     /**
@@ -93,64 +94,77 @@ class Text extends AbstractType
     }
 
     /**
-     * @param string $name
+     * @param array $pattern
      * @param        $values
      *
      * @return \Elastica\Query\Match
      */
-    protected function getMatchQuery(string $name, $values)
+    protected function getMatchQuery(array $pattern, $values)
     {
-        return new Match($name, $values);
+        return new Match($pattern['fields'][0], $values);
     }
 
     /**
-     * @param string $name
+     * @param array $pattern
      * @param        $values
      *
      * @return \Elastica\Query\MatchPhrase
      */
-    protected function getMatchPhraseQuery(string $name, $values)
+    protected function getMatchPhraseQuery(array $pattern, $values)
     {
-        return new MatchPhrase($name, $values);
+        return new MatchPhrase($pattern['fields'][0], $values);
     }
 
     /**
-     * @param string $name
+     * @param array $pattern
+     * @param       $values
+     *
+     * @return \Elastica\Query\MultiMatch
+     */
+    protected function getMultiMatchQuery(array $pattern, $values)
+    {
+        $query = new MultiMatch();
+        $query->setFields($pattern['fields']);
+        return $query->setQuery($values);
+    }
+
+    /**
+     * @param array $pattern
      * @param        $values
      *
      * @return \Elastica\Query\Term|\Elastica\Query\Terms
      */
-    protected function getTermsQuery(string $name, $values)
+    protected function getTermsQuery(array $pattern, $values)
     {
         $values = array_map(function ($value) {
             return trim($value);
         }, preg_split('/\s*+,\s*+/', $values));
 
         if (count($values) > 1) {
-            return new Terms($name, $values);
+            return new Terms($pattern['fields'][0], $values);
         }
 
-        return new Term([$name => $values[0]]);
+        return new Term([$pattern['fields'][0] => $values[0]]);
     }
 
     /**
-     * @param string $name
+     * @param array $pattern
      * @param        $values
      *
      * @return \Elastica\Query\Term
      */
-    protected function getTermQuery(string $name, $values)
+    protected function getTermQuery(array $pattern, $values)
     {
-        return new Term([$name => $values]);
+        return new Term([$pattern['fields'][0] => $values]);
     }
 
     /**
-     * @param string $name
+     * @param array $pattern
      *
      * @return \Elastica\Query\Exists
      */
-    protected function getExistsQuery(string $name)
+    protected function getExistsQuery(array $pattern)
     {
-        return new Exists($name);
+        return new Exists($pattern['fields'][0]);
     }
 }

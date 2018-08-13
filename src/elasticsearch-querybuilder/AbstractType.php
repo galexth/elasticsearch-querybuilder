@@ -15,19 +15,19 @@ abstract class AbstractType
      */
     protected function getMethod(string $type)
     {
-        return 'get'.ucfirst($type).'Query';
+        return 'get'.camel_case($type).'Query';
     }
 
     /**
      * @param string $queryType
-     * @param string $operand
+     * @param array  $pattern
      * @param        $values
      *
      * @return mixed
      */
-    protected function callMethod(string $queryType, string $operand, $values)
+    protected function callMethod(string $queryType, array $pattern, $values)
     {
-        return call_user_func_array([$this, $this->getMethod($queryType)], [$operand, $values]);
+        return call_user_func_array([$this, $this->getMethod($queryType)], [$pattern, $values]);
     }
 
     /**

@@ -86,4 +86,17 @@ final class ParseTest extends TestCase
 
         d($bool->toArray());
     }
+
+    public function testParse7()
+    {
+        $query = '@keywords has John';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
 }
