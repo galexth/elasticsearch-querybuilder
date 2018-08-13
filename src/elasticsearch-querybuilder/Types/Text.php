@@ -7,6 +7,7 @@ use Elastica\Query\Exists;
 use Elastica\Query\Match;
 use Elastica\Query\MatchPhrase;
 use Elastica\Query\MultiMatch;
+use Elastica\Query\Range;
 use Elastica\Query\Term;
 use Elastica\Query\Terms;
 use Galexth\QueryBuilder\AbstractType;
@@ -62,6 +63,17 @@ class Text extends AbstractType
      * @param \Galexth\QueryBuilder\Expression $expression
      * @param array                            $pattern
      *
+     * @return mixed
+     */
+    public function in(Expression $expression, array $pattern)
+    {
+        return $this->has($expression, $pattern);
+    }
+
+    /**
+     * @param \Galexth\QueryBuilder\Expression $expression
+     * @param array                            $pattern
+     *
      * @return \Elastica\Query\BoolQuery
      */
     public function isNot(Expression $expression, array $pattern)
@@ -91,6 +103,63 @@ class Text extends AbstractType
     {
         $bool = new BoolQuery();
         return $bool->addMustNot($this->{$method}($expression, $pattern));
+    }
+
+    /**
+     * @param \Galexth\QueryBuilder\Expression $expression
+     * @param array                            $pattern
+     *
+     * @return mixed
+     */
+    public function lt(Expression $expression, array $pattern)
+    {
+        return $this->callMethod('range', $pattern, [__FUNCTION__ => $expression->values]);
+    }
+
+    /**
+     * @param \Galexth\QueryBuilder\Expression $expression
+     * @param array                            $pattern
+     *
+     * @return mixed
+     */
+    public function lte(Expression $expression, array $pattern)
+    {
+        return $this->callMethod('range', $pattern, [__FUNCTION__ => $expression->values]);
+    }
+
+    /**
+     * @param \Galexth\QueryBuilder\Expression $expression
+     * @param array                            $pattern
+     *
+     * @return mixed
+     */
+    public function gt(Expression $expression, array $pattern)
+    {
+        return $this->callMethod('range', $pattern, [__FUNCTION__ => $expression->values]);
+    }
+
+    /**
+     * @param \Galexth\QueryBuilder\Expression $expression
+     * @param array                            $pattern
+     *
+     * @return mixed
+     */
+    public function gte(Expression $expression, array $pattern)
+    {
+        return $this->callMethod('range', $pattern, [__FUNCTION__ => $expression->values]);
+    }
+
+    /**
+     * @param \Galexth\QueryBuilder\Expression $expression
+     * @param array                            $pattern
+     *
+     * @return mixed
+     */
+    public function between(Expression $expression, array $pattern)
+    {
+        return $this->callMethod('range', $pattern, [
+            'gte' => $expression->values[0], 'lte' => $expression->values[1],
+        ]);
     }
 
     /**
@@ -166,5 +235,16 @@ class Text extends AbstractType
     protected function getExistsQuery(array $pattern)
     {
         return new Exists($pattern['fields'][0]);
+    }
+
+    /**
+     * @param array $pattern
+     * @param       $values
+     *
+     * @return \Elastica\Query\Range
+     */
+    protected function getRangeQuery(array $pattern, $values)
+    {
+        return new Range($pattern['fields'][0], $values);
     }
 }

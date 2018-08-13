@@ -99,4 +99,30 @@ final class ParseTest extends TestCase
 
         d($bool->toArray());
     }
+
+    public function testParse8()
+    {
+        $query = '@revenue gte 123 and @revenue lt 523';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
+
+    public function testParse9()
+    {
+        $query = '@revenue between 123 and 444';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
 }

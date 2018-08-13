@@ -91,7 +91,7 @@ class Builder
      */
     private function parseExpression(string $expression)
     {
-        preg_match('/@(\w+)\s+(?:(is not empty|is empty)$|((?:has|is)(?:\s+not)?)\s+(.+))/', $expression, $matches);
+        preg_match('/@(\w+)\s+(?:(is not empty|is empty)$|((?:has|is|lt|lte|gt|gte|between)(?:\s+not)?)\s+(.+))/', $expression, $matches);
 
         //@todo unexpected result
         $matches = array_values(array_filter($matches));

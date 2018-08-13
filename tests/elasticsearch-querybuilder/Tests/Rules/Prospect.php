@@ -24,6 +24,11 @@ class Prospect implements Rule
                 'fields' => ['industry'],
                 'type' => 'text',
             ],
+            'revenue' => [
+                'query_type' => 'range',
+                'fields' => ['revenue'],
+                'type' => 'text',
+            ],
             'tags' => [
                 'query_type' => 'terms',
                 'fields' => ['tags.name'],
