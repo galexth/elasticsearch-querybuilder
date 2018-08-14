@@ -25,7 +25,7 @@ class Builder
      * @param string $query
      *
      * @return \Elastica\Query\BoolQuery
-     * @throws \Exception
+     * @throws \Galexth\QueryBuilder\BuilderException
      */
     public function build(string $query)
     {
@@ -87,7 +87,7 @@ class Builder
      * @param string $expression
      *
      * @return \Galexth\QueryBuilder\Expression|string
-     * @throws \Exception
+     * @throws \Galexth\QueryBuilder\BuilderException
      */
     private function parseExpression(string $expression)
     {
@@ -101,7 +101,7 @@ class Builder
         $matches = array_values(array_filter($matches));
 
         if (count($matches) < 3) {
-            throw new \Exception('Wrong number of segments.');
+            throw new BuilderException('Wrong number of segments.');
         }
 
         $values = isset($matches[3]) ? $this->removeQuotes($matches[3]) : null;
@@ -114,7 +114,7 @@ class Builder
      * @param string|null $lastOperator
      *
      * @return \Elastica\Query\BoolQuery
-     * @throws \Exception
+     * @throws \Galexth\QueryBuilder\BuilderException
      */
     private function buildQuery(array $terms, string $lastOperator = null)
     {
@@ -123,7 +123,7 @@ class Builder
 
         foreach ($terms as $key => $item) {
             if ($key % 2 && ! in_array($item, ['and', 'or'])) {
-                throw new \Exception('Wrong sequence.');
+                throw new BuilderException('Wrong sequence.');
             }
 
             if ($item instanceof Expression) {
@@ -132,7 +132,7 @@ class Builder
                 $type = $this->getTypeObject($pattern['type']);
 
                 if (! method_exists($type, ($method = camel_case($item->operator)))) {
-                    throw new \Exception("Unknown operator '{$item->operator}' in type '{$pattern['type']}'.");
+                    throw new BuilderException("Unknown operator '{$item->operator}' in type '{$pattern['type']}'.");
                 }
 
                 $query = call_user_func_array([$type, $method], [$item, $pattern]);
@@ -176,7 +176,7 @@ class Builder
      * @param string $operand
      *
      * @return mixed
-     * @throws \Exception
+     * @throws \Galexth\QueryBuilder\BuilderException
      */
     private function getPattern(string $operand)
     {
@@ -199,7 +199,7 @@ class Builder
             }
         }
 
-        throw new \Exception("Unknown operand '{$operand}'.");
+        throw new BuilderException("Unknown operand '{$operand}'.");
     }
 
     /**

@@ -94,9 +94,7 @@ abstract class AbstractType
      */
     protected function getTermsQuery(array $pattern, $values)
     {
-        $values = array_map(function ($value) {
-            return trim($value);
-        }, preg_split('/\s*+,\s*+/', $values));
+        $values = preg_split('/\s*+,\s*+/', $values);
 
         if (count($values) > 1) {
             return new Terms($pattern['fields'][0], $values);
@@ -131,7 +129,7 @@ abstract class AbstractType
      * @param       $values
      *
      * @return \Elastica\Query\Range
-     * @throws \Exception
+     * @throws \Galexth\QueryBuilder\BuilderException
      */
     protected function getRangeQuery(array $pattern, $values)
     {
@@ -142,7 +140,7 @@ abstract class AbstractType
                 try {
                     Carbon::parse($value);
                 } catch (\Exception $e) {
-                    throw new \Exception('Wrong date format in between clause.');
+                    throw new BuilderException('Wrong date format in between clause.');
                 }
             }
         }
