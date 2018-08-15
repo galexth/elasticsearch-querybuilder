@@ -4,6 +4,7 @@ namespace Galexth\QueryBuilder\Types;
 
 use Elastica\Query\BoolQuery;
 use Galexth\QueryBuilder\AbstractType;
+use Galexth\QueryBuilder\BuilderException;
 use Galexth\QueryBuilder\Expression;
 
 class Text extends AbstractType
@@ -150,6 +151,12 @@ class Text extends AbstractType
      */
     public function between(Expression $expression, array $pattern)
     {
+        $expression->values = $this->splitValues($expression->values);
+
+        if (count($expression->values) < 2) {
+            throw new BuilderException('Wrong number of parameters.');
+        }
+
         return $this->callMethod('range', $pattern, [
             'gte' => $expression->values[0], 'lte' => $expression->values[1],
         ]);

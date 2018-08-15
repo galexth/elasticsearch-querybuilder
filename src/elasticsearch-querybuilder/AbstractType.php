@@ -17,41 +17,6 @@ use Elastica\Query\Terms;
 abstract class AbstractType
 {
     /**
-     * @param string $type
-     *
-     * @return string
-     */
-    protected function getMethod(string $type)
-    {
-        return 'get'.camel_case($type).'Query';
-    }
-
-    /**
-     * @param string $queryType
-     * @param array  $pattern
-     * @param        $values
-     *
-     * @return mixed
-     */
-    protected function callMethod(string $queryType, array $pattern, $values)
-    {
-        return call_user_func_array([$this, $this->getMethod($queryType)], [$pattern, $values]);
-    }
-
-    /**
-     * @param string                        $path
-     * @param \Elastica\Query\AbstractQuery $query
-     *
-     * @return \Elastica\Query\Nested
-     */
-    public function nest(string $path, AbstractQuery $query)
-    {
-        $nested = new Nested();
-        $nested->setPath($path);
-        return $nested->setQuery($query);
-    }
-
-    /**
      * @param array $pattern
      * @param        $values
      *
@@ -94,7 +59,7 @@ abstract class AbstractType
      */
     protected function getTermsQuery(array $pattern, $values)
     {
-        $values = preg_split('/\s*+,\s*+/', $values);
+        $values = $this->splitValues($values);
 
         if (count($values) > 1) {
             return new Terms($pattern['fields'][0], $values);
@@ -157,5 +122,51 @@ abstract class AbstractType
     protected function getCustomQuery(array $pattern, $values)
     {
         return call_user_func($pattern['callback'], $values);
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
+    protected function getMethod(string $type)
+    {
+        return 'get'.camel_case($type).'Query';
+    }
+
+    /**
+     * @param string $values
+     * @param string $pattern
+     *
+     * @return array
+     */
+    protected function splitValues(string $values, string $pattern = '\s*+,\s*+')
+    {
+        return preg_split("/{$pattern}/", $values, -1, PREG_SPLIT_NO_EMPTY);
+    }
+
+    /**
+     * @param string $queryType
+     * @param array  $pattern
+     * @param        $values
+     *
+     * @return mixed
+     */
+    protected function callMethod(string $queryType, array $pattern, $values)
+    {
+        return call_user_func_array([$this, $this->getMethod($queryType)], [$pattern, $values]);
+    }
+
+    /**
+     * @param string                        $path
+     * @param \Elastica\Query\AbstractQuery $query
+     *
+     * @return \Elastica\Query\Nested
+     */
+    public function nest(string $path, AbstractQuery $query)
+    {
+        $nested = new Nested();
+        $nested->setPath($path);
+        return $nested->setQuery($query);
     }
 }

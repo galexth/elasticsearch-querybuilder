@@ -115,7 +115,7 @@ final class ParseTest extends TestCase
 
     public function testParse9()
     {
-        $query = '@revenue between 123 and 444';
+        $query = '@revenue between 2018-01-01, 2018-01-02';
 
         $builder = new Builder(new Prospect);
 
