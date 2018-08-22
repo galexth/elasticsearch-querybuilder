@@ -14,7 +14,7 @@ class Prospect implements Rule
             [
                 'name' => 'keywords',
                 'query_type' => 'multi_match',
-                'fields' => ['name', 'first_name', 'last_name'],
+                'fields' => ['name'],
                 'type' => 'text',
             ],
             [
