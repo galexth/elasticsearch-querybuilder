@@ -129,7 +129,7 @@ class Builder
             if ($item instanceof Expression) {
                 $pattern = $this->getPattern($item->operand);
 
-                $type = $this->getTypeObject($pattern['type']);
+                $type = $this->getTypeObject(ucfirst($pattern['type']));
 
                 if (! method_exists($type, ($method = camel_case($item->operator)))) {
                     throw new BuilderException("Unknown operator '{$item->operator}' in type '{$pattern['type']}'.");
