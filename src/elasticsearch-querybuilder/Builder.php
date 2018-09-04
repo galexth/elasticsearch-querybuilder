@@ -70,7 +70,11 @@ class Builder
 
             // parse expressions under short codes separately
             if (preg_match('/{\$(\d+)}/', $item, $matches)) {
-                return $this->parse($replaced[$matches[1] - 1]);
+                $subChunk = $this->parse($replaced[$matches[1] - 1]);
+
+                // return only Expression object if there is only one clause inside
+                // @todo  make it better
+                return count($subChunk) > 1 ? $subChunk : $subChunk[0];
             }
 
             if (! $this->isBoolOperator($item)) {
