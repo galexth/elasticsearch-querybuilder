@@ -29,7 +29,7 @@ class Builder
      */
     public function build(string $query)
     {
-        $terms = $this->parse(strtolower($query));
+        $terms = $this->parse($query);
 
         return $this->buildQuery($terms, count($terms) == 1 ? 'and' : null);
     }
@@ -48,7 +48,7 @@ class Builder
             $query = substr($query, 1, -1);
         }
 
-        $pattern = '/\(\s*+@.+?\)+(?=\s+(?:and|or))|\(\s*+@.+?\)+$/';
+        $pattern = '/\(\s*+@.+?\)+(?=\s+(?:and|or))|\(\s*+@.+?\)+$/i';
 
         $replaced = [];
 
@@ -60,7 +60,7 @@ class Builder
         }, $query);
 
 
-        $pattern = '/(and|or)(?=\s+(?:@|{\$\d}))/';
+        $pattern = '/(and|or)(?=\s+(?:@|{\$\d}))/i';
 
         // Spits query by and|or
         $parts = preg_split($pattern, $result, -1, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
@@ -73,7 +73,7 @@ class Builder
                 return $this->parse($replaced[$matches[1] - 1]);
             }
 
-            if (! in_array($item, ['or', 'and'])) {
+            if (! $this->isBoolOperator($item)) {
                 $item = $this->parseExpression(trim($item));
             }
 
@@ -92,7 +92,7 @@ class Builder
     private function parseExpression(string $expression)
     {
         preg_match(
-            '/@([\w.]+)\s+(?:(is not empty|is empty)$|((?:has|in||is|lt|lte|gt|gte|between)(?:\s+not)?)\s+(.+))/',
+            '/@([\w.]+)\s+(?:(is not empty|is empty)$|((?:has|in||is|lt|lte|gt|gte|between)(?:\s+not)?)\s+(.+))/i',
             $expression,
             $matches
         );
@@ -122,7 +122,7 @@ class Builder
         $operandPair = [];
 
         foreach ($terms as $key => $item) {
-            if ($key % 2 && ! in_array($item, ['and', 'or'])) {
+            if ($key % 2 && ! $this->isBoolOperator($item)) {
                 throw new BuilderException('Wrong sequence.');
             }
 
@@ -220,7 +220,17 @@ class Builder
      */
     private function getBoolType(string $operator)
     {
-        return $operator == 'and' ? 'addMust' : 'addShould';
+        return strtolower($operator) == 'and' ? 'addMust' : 'addShould';
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return bool
+     */
+    private function isBoolOperator(string $value)
+    {
+        return in_array(strtolower($value), ['and', 'or']);
     }
 
     /**
