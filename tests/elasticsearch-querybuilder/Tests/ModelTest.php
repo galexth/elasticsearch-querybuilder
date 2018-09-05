@@ -30,13 +30,13 @@ final class ParseTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
 
-        $this->client = new Client([
-            'host' => '0.0.0.0',
-            'port' => 2040
-        ]);
-
-        $this->type = $this->client->getIndex('salestools_prospector_local_prospect')
-            ->getType('prospect');
+//        $this->client = new Client([
+//            'host' => '0.0.0.0',
+//            'port' => 2040
+//        ]);
+//
+//        $this->type = $this->client->getIndex('salestools_prospector_local_prospect')
+//            ->getType('prospect');
     }
 
     public function testParse1()
@@ -229,6 +229,91 @@ final class ParseTest extends TestCase
     public function testParse12()
     {
         $query = '@persona is 15';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        $response = $this->type->search($bool);
+
+        d($bool->toArray());
+
+        $this->assertTrue($response->getResponse()->isOk());
+    }
+
+    public function testParse13()
+    {
+        $query = '@revenue between "2018-01-01 and 2018-01-02"';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        $response = $this->type->search($bool);
+
+        d($bool->toArray());
+
+        $this->assertTrue($response->getResponse()->isOk());
+    }
+
+    public function testParse14()
+    {
+        $query = '@revenue before 2018-01-01';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        $response = $this->type->search($bool);
+
+        d($bool->toArray());
+
+        $this->assertTrue($response->getResponse()->isOk());
+    }
+
+    public function testParse15()
+    {
+        $query = '@revenue after 2018-01-01';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        $response = $this->type->search($bool);
+
+        d($bool->toArray());
+
+        $this->assertTrue($response->getResponse()->isOk());
+    }
+
+    public function testParse16()
+    {
+        $query = '@revenue less 12';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        $response = $this->type->search($bool);
+
+        d($bool->toArray());
+
+        $this->assertTrue($response->getResponse()->isOk());
+    }
+
+    public function testParse17()
+    {
+        $query = '@revenue more 12';
 
         $builder = new Builder(new Prospect);
 

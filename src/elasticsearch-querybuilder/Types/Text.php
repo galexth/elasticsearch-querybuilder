@@ -149,22 +149,65 @@ class Text extends AbstractType
      *
      * @return mixed
      */
+    public function more(Expression $expression, array $pattern)
+    {
+        return $this->gte($expression, $pattern);
+    }
+
+    /**
+     * @param \Galexth\QueryBuilder\Expression $expression
+     * @param array                            $pattern
+     *
+     * @return mixed
+     */
+    public function after(Expression $expression, array $pattern)
+    {
+        return $this->gte($expression, $pattern);
+    }
+
+    /**
+     * @param \Galexth\QueryBuilder\Expression $expression
+     * @param array                            $pattern
+     *
+     * @return mixed
+     */
+    public function less(Expression $expression, array $pattern)
+    {
+        return $this->lte($expression, $pattern);
+    }
+
+    /**
+     * @param \Galexth\QueryBuilder\Expression $expression
+     * @param array                            $pattern
+     *
+     * @return mixed
+     */
+    public function before(Expression $expression, array $pattern)
+    {
+        return $this->lte($expression, $pattern);
+    }
+
+    /**
+     * @param \Galexth\QueryBuilder\Expression $expression
+     * @param array                            $pattern
+     *
+     * @return mixed
+     * @throws \Galexth\QueryBuilder\BuilderException
+     */
     public function between(Expression $expression, array $pattern)
     {
-        $expression->values = $this->splitValues($expression->values);
-
         // legacy support for old format 'value and value'
         // @todo remove after updated
-        if (count($expression->values) < 2) {
-            $expression->values = $this->splitValues($expression->values[0], '/\s*+and\s*+/i');
-        }
+        $regexp = preg_match('/and/i', $expression->values) ? '/\s*+and\s*+/i' : '/\s*+,\s*+/';
 
-        if (count($expression->values) < 2) {
+        $values = $this->splitValues($expression->values, $regexp);
+
+        if (count($values) < 2) {
             throw new BuilderException('Wrong number of parameters.');
         }
 
         return $this->callMethod('range', $pattern, [
-            'gte' => $expression->values[0], 'lte' => $expression->values[1],
+            'gte' => $values[0], 'lte' => $values[1],
         ]);
     }
 }
