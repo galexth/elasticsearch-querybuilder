@@ -46,9 +46,14 @@ abstract class AbstractType
      */
     protected function getMultiMatchQuery(array $pattern, $values)
     {
+        // replace , by empty space
+        // @todo remove legacy
+        $values = $this->splitValues($values);
+
         $query = new MultiMatch();
         $query->setFields($pattern['fields']);
-        return $query->setQuery($values);
+
+        return $query->setQuery(implode(' ', $values));
     }
 
     /**
