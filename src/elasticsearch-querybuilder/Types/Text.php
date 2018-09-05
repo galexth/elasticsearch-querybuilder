@@ -79,6 +79,17 @@ class Text extends AbstractType
      * @param \Galexth\QueryBuilder\Expression $expression
      * @param array                            $pattern
      *
+     * @return \Elastica\Query\BoolQuery
+     */
+    public function notHave(Expression $expression, array $pattern)
+    {
+        return $this->hasNot($expression, $pattern);
+    }
+
+    /**
+     * @param \Galexth\QueryBuilder\Expression $expression
+     * @param array                            $pattern
+     *
      * @return mixed
      */
     public function in(Expression $expression, array $pattern)

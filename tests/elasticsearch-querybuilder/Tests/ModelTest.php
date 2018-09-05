@@ -327,4 +327,21 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($response->getResponse()->isOk());
     }
+
+    public function testParse18()
+    {
+        $query = '@keywords not have John, sdfd';
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        $response = $this->type->search($bool);
+
+        d($bool->toArray());
+
+        $this->assertTrue($response->getResponse()->isOk());
+    }
 }
