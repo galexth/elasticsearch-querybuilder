@@ -103,7 +103,7 @@ abstract class AbstractType
                 $values[$key] = (int) $value;
             } else {
                 try {
-                    Carbon::parse($value);
+                    $values[$key] = Carbon::parse($value)->toDateTimeString();
                 } catch (\Exception $e) {
                     throw new BuilderException('Wrong date format in between clause.');
                 }
