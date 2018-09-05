@@ -153,6 +153,12 @@ class Text extends AbstractType
     {
         $expression->values = $this->splitValues($expression->values);
 
+        // legacy support for old format 'value and value'
+        // @todo remove after updated
+        if (count($expression->values) < 2) {
+            $expression->values = $this->splitValues($expression->values[0], '/\s*+and\s*+/i');
+        }
+
         if (count($expression->values) < 2) {
             throw new BuilderException('Wrong number of parameters.');
         }
