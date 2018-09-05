@@ -140,9 +140,9 @@ abstract class AbstractType
      *
      * @return array
      */
-    protected function splitValues(string $values, string $pattern = '\s*+,\s*+')
+    protected function splitValues(string $values, string $pattern = '/\s*+,\s*+/')
     {
-        return preg_split("/{$pattern}/", $values, -1, PREG_SPLIT_NO_EMPTY);
+        return preg_split($pattern, $values, -1, PREG_SPLIT_NO_EMPTY);
     }
 
     /**
