@@ -1,6 +1,8 @@
-##Elasticsearch query builder
+# Elasticsearch query builder
 
-####Rules
+Elastica query builder for laravel.
+
+## Rules
 
 Each rules have to implement \Galexth\QueryBuilder\Rule interface with pattern() array:
 ```php
@@ -43,7 +45,7 @@ class MyRule implements Rule
     }
 }
 ```
-####Query
+## Query
 
 Use queries like:
 ```php
