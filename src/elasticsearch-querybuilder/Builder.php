@@ -90,7 +90,7 @@ class Builder
      * Turns 'name has John' into an Expression object
      * @param string $expression
      *
-     * @return \Galexth\QueryBuilder\Expression|string
+     * @return \Galexth\QueryBuilder\Expression
      * @throws \Galexth\QueryBuilder\BuilderException
      */
     private function parseExpression(string $expression)
@@ -108,7 +108,11 @@ class Builder
             throw new BuilderException('Wrong number of segments.');
         }
 
-        $values = isset($matches[3]) ? $this->removeQuotes($matches[3]) : null;
+        $values = [];
+
+        if (isset($matches[3])) {
+            $values = $this->parseValues($matches[3]);
+        }
 
         return new Expression($matches[1], $matches[2], $values);
     }
@@ -238,16 +242,49 @@ class Builder
     }
 
     /**
+     * @param string $values
+     *
+     * @return array
+     */
+    private function parseValues(string $values)
+    {
+        if (count($result = $this->splitValues($values)) < 2 && ! $this->removeQuotes($values, true)) {
+            $result = $this->splitValues($values, '/\s*+,\s*+/');
+        }
+
+        return array_map(function ($item) {
+            return $this->removeQuotes($item);
+        }, $result);
+
+    }
+
+    /**
      * Removed the quotes ",' from start and end of a value
      *
      * @param string $values
+     * @param bool   $match
      *
-     * @return string
+     * @return string|bool
      */
-    private function removeQuotes(string $values)
+    private function removeQuotes(string $values, bool $match = false)
     {
         preg_match('/(?<=["\'])(.+)(?=["\']$)/', $values, $matches);
 
+        if ($match) {
+            return isset($matches[1]);
+        }
+
         return $matches[1] ?? $values;
+    }
+
+    /**
+     * @param string $values
+     * @param string $pattern
+     *
+     * @return array
+     */
+    private function splitValues(string $values, string $pattern = '/(?<=["\'])\s*+,\s*+(?=["\'])/')
+    {
+        return preg_split($pattern, $values, -1, PREG_SPLIT_NO_EMPTY);
     }
 }

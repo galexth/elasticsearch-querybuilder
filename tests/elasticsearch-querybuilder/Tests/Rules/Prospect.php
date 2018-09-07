@@ -36,6 +36,12 @@ class Prospect implements Rule
                 'type' => 'text',
             ],
             [
+                'name' => 'size',
+                'query_type' => 'terms',
+                'fields' => ['employees_range'],
+                'type' => 'text'
+            ],
+            [
                 'name' => 'rank\.(?<sub_field>[\w-_]+)$',
                 'expression' => true,
                 'query_type' => 'terms',

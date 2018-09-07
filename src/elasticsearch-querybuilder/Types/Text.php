@@ -118,7 +118,7 @@ class Text extends AbstractType
      */
     public function lt(Expression $expression, array $pattern)
     {
-        return $this->callMethod('range', $pattern, [__FUNCTION__ => $expression->values]);
+        return $this->callMethod('range', $pattern, [__FUNCTION__ => array_first($expression->values)]);
     }
 
     /**
@@ -129,7 +129,7 @@ class Text extends AbstractType
      */
     public function lte(Expression $expression, array $pattern)
     {
-        return $this->callMethod('range', $pattern, [__FUNCTION__ => $expression->values]);
+        return $this->callMethod('range', $pattern, [__FUNCTION__ => array_first($expression->values)]);
     }
 
     /**
@@ -140,7 +140,7 @@ class Text extends AbstractType
      */
     public function gt(Expression $expression, array $pattern)
     {
-        return $this->callMethod('range', $pattern, [__FUNCTION__ => $expression->values]);
+        return $this->callMethod('range', $pattern, [__FUNCTION__ => array_first($expression->values)]);
     }
 
     /**
@@ -151,7 +151,7 @@ class Text extends AbstractType
      */
     public function gte(Expression $expression, array $pattern)
     {
-        return $this->callMethod('range', $pattern, [__FUNCTION__ => $expression->values]);
+        return $this->callMethod('range', $pattern, [__FUNCTION__ => array_first($expression->values)]);
     }
 
     /**
@@ -207,11 +207,12 @@ class Text extends AbstractType
      */
     public function between(Expression $expression, array $pattern)
     {
+        $values = $expression->values;
         // legacy support for old format 'value and value'
         // @todo remove after updated
-        $regexp = preg_match('/and/i', $expression->values) ? '/\s*+and\s*+/i' : '/\s*+,\s*+/';
-
-        $values = $this->splitValues($expression->values, $regexp);
+        if (count($values) < 2 && preg_match('/and/i', $values[0])) {
+            $values = preg_split('/\s*+and\s*+/i', $values[0], -1, PREG_SPLIT_NO_EMPTY);
+        }
 
         if (count($values) < 2) {
             throw new BuilderException('Wrong number of parameters.');

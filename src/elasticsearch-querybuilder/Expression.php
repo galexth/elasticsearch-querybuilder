@@ -9,10 +9,12 @@ class Expression
      * @var string
      */
     public $operand;
+
     /**
      * @var string
      */
     public $operator;
+
     /**
      * @var array
      */
@@ -25,7 +27,7 @@ class Expression
      * @param string $operator
      * @param array  $values
      */
-    public function __construct(string $operand, string $operator, ?string $values)
+    public function __construct(string $operand, string $operator, array $values = [])
     {
         $this->operand = $operand;
         $this->operator = $operator;

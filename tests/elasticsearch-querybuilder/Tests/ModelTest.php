@@ -49,11 +49,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse2()
@@ -66,11 +68,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse3()
@@ -83,11 +87,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse4()
@@ -100,11 +106,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse5()
@@ -117,11 +125,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse6()
@@ -134,11 +144,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse7()
@@ -151,11 +163,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse8()
@@ -168,11 +182,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse9()
@@ -185,16 +201,18 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse10()
     {
-        $query = '@location.country has asds';
+        $query = '@location.country has "asds gh"';
 
         $builder = new Builder(new Prospect);
 
@@ -202,11 +220,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse11()
@@ -219,11 +239,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse12()
@@ -236,11 +258,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse13()
@@ -253,11 +277,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse14()
@@ -270,11 +296,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse15()
@@ -287,11 +315,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse16()
@@ -304,11 +334,13 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse17()
@@ -321,16 +353,18 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
     }
 
     public function testParse18()
     {
-        $query = '@keywords not have John, sdfd';
+        $query = '@revenue not have 12, 34';
 
         $builder = new Builder(new Prospect);
 
@@ -338,10 +372,38 @@ final class ParseTest extends TestCase
 
         $this->assertTrue($bool instanceof BoolQuery);
 
-        $response = $this->type->search($bool);
-
         d($bool->toArray());
 
-        $this->assertTrue($response->getResponse()->isOk());
+        if (isset($this->type)) {
+            $response = $this->type->search($bool);
+
+            $this->assertTrue($response->getResponse()->isOk());
+        }
+    }
+
+    public function testParse19()
+    {
+        $query = "@size has '51-200 employees', '501-1000 employees' AND @industry has 'Semiconductors'";
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
+
+    public function testParse20()
+    {
+        $query = "@size has '51-200 employees, 501-1000 employees' AND @industry has 'Semiconductors'";
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
     }
 }

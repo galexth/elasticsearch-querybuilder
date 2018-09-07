@@ -18,38 +18,34 @@ abstract class AbstractType
 {
     /**
      * @param array $pattern
-     * @param        $values
+     * @param array $values
      *
      * @return \Elastica\Query\Match
      */
-    protected function getMatchQuery(array $pattern, $values)
+    protected function getMatchQuery(array $pattern, array $values)
     {
         return new Match($pattern['fields'][0], $values);
     }
 
     /**
      * @param array $pattern
-     * @param        $values
+     * @param array $values
      *
      * @return \Elastica\Query\MatchPhrase
      */
-    protected function getMatchPhraseQuery(array $pattern, $values)
+    protected function getMatchPhraseQuery(array $pattern, array $values)
     {
         return new MatchPhrase($pattern['fields'][0], $values);
     }
 
     /**
      * @param array $pattern
-     * @param       $values
+     * @param array $values
      *
      * @return \Elastica\Query\MultiMatch
      */
-    protected function getMultiMatchQuery(array $pattern, $values)
+    protected function getMultiMatchQuery(array $pattern, array $values)
     {
-        // replace , by empty space
-        // @todo remove legacy
-        $values = $this->splitValues($values);
-
         $query = new MultiMatch();
         $query->setFields($pattern['fields']);
 
@@ -58,14 +54,12 @@ abstract class AbstractType
 
     /**
      * @param array $pattern
-     * @param        $values
+     * @param array $values
      *
      * @return \Elastica\Query\Term|\Elastica\Query\Terms
      */
-    protected function getTermsQuery(array $pattern, $values)
+    protected function getTermsQuery(array $pattern, array $values)
     {
-        $values = $this->splitValues($values);
-
         if (count($values) > 1) {
             return new Terms($pattern['fields'][0], $values);
         }
@@ -75,11 +69,11 @@ abstract class AbstractType
 
     /**
      * @param array $pattern
-     * @param        $values
+     * @param array $values
      *
      * @return \Elastica\Query\Term
      */
-    protected function getTermQuery(array $pattern, $values)
+    protected function getTermQuery(array $pattern, array $values)
     {
         return new Term([$pattern['fields'][0] => $values]);
     }
@@ -96,12 +90,12 @@ abstract class AbstractType
 
     /**
      * @param array $pattern
-     * @param       $values
+     * @param array $values
      *
      * @return \Elastica\Query\Range
      * @throws \Galexth\QueryBuilder\BuilderException
      */
-    protected function getRangeQuery(array $pattern, $values)
+    protected function getRangeQuery(array $pattern, array $values)
     {
         foreach ($values as $key => $value) {
             if (is_numeric($value)) {
@@ -120,11 +114,11 @@ abstract class AbstractType
 
     /**
      * @param array $pattern
-     * @param       $values
+     * @param array $values
      *
      * @return mixed
      */
-    protected function getCustomQuery(array $pattern, $values)
+    protected function getCustomQuery(array $pattern, array $values)
     {
         return call_user_func($pattern['callback'], $values);
     }
@@ -140,24 +134,13 @@ abstract class AbstractType
     }
 
     /**
-     * @param string $values
-     * @param string $pattern
-     *
-     * @return array
-     */
-    protected function splitValues(string $values, string $pattern = '/\s*+,\s*+/')
-    {
-        return preg_split($pattern, $values, -1, PREG_SPLIT_NO_EMPTY);
-    }
-
-    /**
      * @param string $queryType
      * @param array  $pattern
      * @param        $values
      *
      * @return mixed
      */
-    protected function callMethod(string $queryType, array $pattern, $values)
+    protected function callMethod(string $queryType, array $pattern, array $values)
     {
         return call_user_func_array([$this, $this->getMethod($queryType)], [$pattern, $values]);
     }
