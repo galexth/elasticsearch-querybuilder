@@ -4,7 +4,7 @@ namespace Galexth\QueryBuilder;
 
 
 use Carbon\Carbon;
-use Elastica\Query\AbstractQuery;
+use Elastica\Query\BoolQuery;
 use Elastica\Query\Exists;
 use Elastica\Query\Match;
 use Elastica\Query\MatchPhrase;
@@ -24,7 +24,9 @@ abstract class AbstractType
      */
     protected function getMatchQuery(array $pattern, array $values)
     {
-        return new Match($pattern['fields'][0], $values[0]);
+        return array_map(function ($value) use ($pattern) {
+            return new Match($pattern['fields'][0], $value);
+        }, $values);
     }
 
     /**
@@ -35,7 +37,9 @@ abstract class AbstractType
      */
     protected function getMatchPhraseQuery(array $pattern, array $values)
     {
-        return new MatchPhrase($pattern['fields'][0], $values[0]);
+        return array_map(function ($value) use ($pattern) {
+            return new MatchPhrase($pattern['fields'][0], $value);
+        }, $values);
     }
 
     /**
@@ -49,7 +53,7 @@ abstract class AbstractType
         $query = new MultiMatch();
         $query->setFields($pattern['fields']);
 
-        return $query->setQuery(implode(' ', $values[0]));
+        return $query->setQuery(implode(' ', $values));
     }
 
     /**
@@ -146,13 +150,18 @@ abstract class AbstractType
     }
 
     /**
-     * @param string                        $path
-     * @param \Elastica\Query\AbstractQuery $query
+     * @param string                              $path
+     * @param \Elastica\Query\AbstractQuery|array $query
      *
      * @return \Elastica\Query\Nested
      */
-    public function nest(string $path, AbstractQuery $query)
+    public function nest(string $path, $query)
     {
+        if (is_array($query)) {
+            $bool = new BoolQuery();
+            $query = $bool->addMust($query);
+        }
+
         $nested = new Nested();
         $nested->setPath($path);
         return $nested->setQuery($query);
