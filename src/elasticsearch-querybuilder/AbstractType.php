@@ -24,7 +24,7 @@ abstract class AbstractType
      */
     protected function getMatchQuery(array $pattern, array $values)
     {
-        return new Match($pattern['fields'][0], $values);
+        return new Match($pattern['fields'][0], $values[0]);
     }
 
     /**
@@ -35,7 +35,7 @@ abstract class AbstractType
      */
     protected function getMatchPhraseQuery(array $pattern, array $values)
     {
-        return new MatchPhrase($pattern['fields'][0], $values);
+        return new MatchPhrase($pattern['fields'][0], $values[0]);
     }
 
     /**
@@ -49,7 +49,7 @@ abstract class AbstractType
         $query = new MultiMatch();
         $query->setFields($pattern['fields']);
 
-        return $query->setQuery(implode(' ', $values));
+        return $query->setQuery(implode(' ', $values[0]));
     }
 
     /**
@@ -75,7 +75,7 @@ abstract class AbstractType
      */
     protected function getTermQuery(array $pattern, array $values)
     {
-        return new Term([$pattern['fields'][0] => $values]);
+        return new Term([$pattern['fields'][0] => $values[0]]);
     }
 
     /**
