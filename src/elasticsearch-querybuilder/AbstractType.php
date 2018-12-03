@@ -4,6 +4,7 @@ namespace Galexth\QueryBuilder;
 
 
 use Carbon\Carbon;
+use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\Exists;
 use Elastica\Query\Match;
@@ -162,8 +163,28 @@ abstract class AbstractType
             $query = $bool->addMust($query);
         }
 
+        return $this->segmentNested($path, clone $query);
+    }
+
+    /**
+     * @param string                        $path
+     * @param \Elastica\Query\AbstractQuery $query
+     *
+     * @return \Elastica\Query\Nested
+     */
+    public function segmentNested(string $path, AbstractQuery $query)
+    {
+        $segments = array_reverse(explode('.', $path));
+
+        if (count($segments)  >  1) {
+            array_pop($segments);
+            $query = $this->segmentNested(implode('.', $segments), $query);
+        }
+
         $nested = new Nested();
         $nested->setPath($path);
-        return $nested->setQuery($query);
+        $nested->setQuery($query);
+
+        return $nested;
     }
 }
