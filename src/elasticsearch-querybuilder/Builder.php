@@ -45,7 +45,12 @@ class Builder
 
         // Removes () from start and end of a query
         if (preg_match('/^\(.+\)$/', $query)) {
-            $query = substr($query, 1, -1);
+
+            preg_match_all('/\(.+?\)/', $query, $m);
+
+            if (count($m[0]) == 1) {
+                $query = substr($query, 1, -1);
+            }
         }
 
         $pattern = '/\(\s*+@.+?\)+(?=\s+(?:and|or))|\(\s*+@.+?\)+$/i';
