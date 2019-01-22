@@ -174,16 +174,16 @@ abstract class AbstractType
      */
     public function segmentNested(string $path, AbstractQuery $query)
     {
-        $segments = array_reverse(explode('.', $path));
-
-        if (count($segments)  >  1) {
-            array_pop($segments);
-            $query = $this->segmentNested(implode('.', $segments), $query);
-        }
+        $segments = explode('.', $path);
 
         $nested = new Nested();
         $nested->setPath($path);
         $nested->setQuery($query);
+
+        if (count($segments)  >  1) {
+            array_pop($segments);
+            return $this->segmentNested(implode('.', $segments), $nested);
+        }
 
         return $nested;
     }
