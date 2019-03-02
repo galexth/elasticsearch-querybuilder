@@ -163,28 +163,11 @@ abstract class AbstractType
             $query = $bool->addMust($query);
         }
 
-        return $this->segmentNested($path, clone $query);
-    }
-
-    /**
-     * @param string                        $path
-     * @param \Elastica\Query\AbstractQuery $query
-     *
-     * @return \Elastica\Query\Nested
-     */
-    public function segmentNested(string $path, AbstractQuery $query)
-    {
-        $segments = explode('.', $path);
-
         $nested = new Nested();
         $nested->setPath($path);
         $nested->setQuery($query);
 
-        if (count($segments)  >  1) {
-            array_pop($segments);
-            return $this->segmentNested(implode('.', $segments), $nested);
-        }
-
         return $nested;
     }
+
 }
