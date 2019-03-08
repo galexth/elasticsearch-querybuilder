@@ -43,32 +43,26 @@ class Builder
     {
         $query = trim($query);
 
-        // Removes () from start and end of a query
-        if (preg_match('/^\(.+\)$/', $query)) {
-
-            preg_match_all('/\(.+?\)/', $query, $m);
-
-            if (count($m[0]) == 1) {
-                $query = substr($query, 1, -1);
-            }
-        }
-
-        $pattern = '/\(\s*+@.+?\)+(?=\s+(?:and|or))|\(\s*+@.+?\)+$/i';
-
         $replaced = [];
 
         // Replaces expressions into brackets by short codes {$1-9}
         // to parse it recursively
-        $result = preg_replace_callback($pattern, function ($matches) use (&$replaced) {
-            $replaced[] = $matches[0];
+        $result = preg_replace_callback('/\(((?>[^()]+)|(?R))*\)/', function ($matches) use (&$replaced) {
+
+            if (! preg_match($this->getExpressionPattern(), $matches[0])) {
+                return $matches[0];
+            }
+
+            $replaced[] = substr($matches[0], 1, -1);
+
             return '{$' . count($replaced) . '}';
+
         }, $query);
 
-
-        $pattern = '/(and|or)(?=\s+(?:@|{\$\d}))/i';
-
         // Spits query by and|or
-        $parts = preg_split($pattern, $result, -1, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
+        $parts = preg_split(
+            '/(and|or)(?=\s+(?:@|{\$\d}))/i', $result, -1, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE
+        );
 
         // Replaces the short codes created previously
         return array_map(function ($item) use ($replaced) {
@@ -100,11 +94,7 @@ class Builder
      */
     private function parseExpression(string $expression)
     {
-        preg_match(
-            '/@([\w.]+)\s+(?:(is not empty|is empty)$|((?:has|in||is|lt|lte|gt|gte|between|less|more|before|after|not have)(?:\s+not)?)\s+(.+))/i',
-            $expression,
-            $matches
-        );
+        preg_match($this->getExpressionPattern(), $expression, $matches);
 
         //@todo unexpected result
         $matches = array_values(array_filter($matches));
@@ -291,5 +281,13 @@ class Builder
     private function splitValues(string $values, string $pattern = '/(?<=["\'])\s*+,\s*+(?=["\'])/')
     {
         return preg_split($pattern, $values, -1, PREG_SPLIT_NO_EMPTY);
+    }
+
+    /**
+     * @return string
+     */
+    private function getExpressionPattern()
+    {
+        return '/@([\w.]+)\s+(?:(is not empty|is empty)$|((?:has|in||is|lt|lte|gt|gte|between|less|more|before|after|not have)(?:\s+not)?)\s+(.+))/i';
     }
 }
