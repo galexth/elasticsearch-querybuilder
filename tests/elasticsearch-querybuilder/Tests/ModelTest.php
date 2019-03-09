@@ -406,4 +406,17 @@ final class ParseTest extends TestCase
 
         d($bool->toArray());
     }
+
+    public function testParse21()
+    {
+        $query = "@size has not '51-200 employees, 501-1000 employees' AND @industry has 'Semiconductors'";
+
+        $builder = new Builder(new Prospect);
+
+        $bool = $builder->build($query);
+
+        $this->assertTrue($bool instanceof BoolQuery);
+
+        d($bool->toArray());
+    }
 }

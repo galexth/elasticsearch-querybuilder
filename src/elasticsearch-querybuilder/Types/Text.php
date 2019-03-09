@@ -2,7 +2,6 @@
 
 namespace Galexth\QueryBuilder\Types;
 
-use Elastica\Query\BoolQuery;
 use Galexth\QueryBuilder\AbstractType;
 use Galexth\QueryBuilder\BuilderException;
 use Galexth\QueryBuilder\Expression;
@@ -39,7 +38,7 @@ class Text extends AbstractType
      */
     public function isEmpty(Expression $expression, array $pattern)
     {
-        return $this->not($expression, $pattern, 'is not empty');
+        return $this->not($expression, $pattern, 'isNotEmpty');
     }
 
     /**
@@ -102,12 +101,11 @@ class Text extends AbstractType
      * @param array                            $pattern
      * @param string                           $method
      *
-     * @return \Elastica\Query\BoolQuery
+     * @return mixed
      */
     public function not(Expression $expression, array $pattern, string $method)
     {
-        $bool = new BoolQuery();
-        return $bool->addMustNot($this->{$method}($expression, $pattern));
+        return $this->{$method}($expression, $pattern);
     }
 
     /**

@@ -141,7 +141,14 @@ class Builder
                 $query = call_user_func_array([$type, $method], [$item, $pattern]);
 
                 if (isset($pattern['nested'])) {
+
+                    /** @var \Elastica\Query\Nested $query */
                     $query = $type->nest($pattern['nested']['path'], $query);
+
+                }
+
+                if ($this->isNegativeOperator($item->operator)) {
+                    $query = (new BoolQuery())->addMustNot($query);
                 }
 
                 $operandPair[] = $query;
@@ -288,6 +295,16 @@ class Builder
      */
     private function getExpressionPattern()
     {
-        return '/@([\w.]+)\s+(?:(is not empty|is empty)$|((?:has|in||is|lt|lte|gt|gte|between|less|more|before|after|not have)(?:\s+not)?)\s+(.+))/i';
+        return '/@([\w.]+)\s+(?:(is not empty|is empty|is blank)$|((?:has not|has|not have|have|not in|in|is not|is|lt|lte|gt|gte|between|less|more|before|after))\s+(.+))/i';
+    }
+
+    /**
+     * @param string $operator
+     *
+     * @return bool
+     */
+    private function isNegativeOperator(string $operator)
+    {
+        return preg_match('/is empty|is blank|has not|not in|is not|not have/', $operator);
     }
 }

@@ -30,7 +30,7 @@ class Expression
     public function __construct(string $operand, string $operator, array $values = [])
     {
         $this->operand = $operand;
-        $this->operator = $operator;
+        $this->operator = strtolower($operator);
         $this->values = $values;
     }
 }
