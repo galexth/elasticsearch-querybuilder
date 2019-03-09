@@ -47,6 +47,17 @@ class Text extends AbstractType
      *
      * @return mixed
      */
+    public function isBlank(Expression $expression, array $pattern)
+    {
+        return $this->isEmpty($expression, $pattern);
+    }
+
+    /**
+     * @param \Galexth\QueryBuilder\Expression $expression
+     * @param array                            $pattern
+     *
+     * @return mixed
+     */
     public function isNotEmpty(Expression $expression, array $pattern)
     {
         return $this->callMethod('exists', $pattern, $expression->values);
