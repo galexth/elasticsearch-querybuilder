@@ -5,6 +5,7 @@ namespace Galexth\QueryBuilder\Types;
 use Galexth\QueryBuilder\AbstractType;
 use Galexth\QueryBuilder\BuilderException;
 use Galexth\QueryBuilder\Expression;
+use Illuminate\Support\Arr;
 
 class Text extends AbstractType
 {
@@ -127,7 +128,7 @@ class Text extends AbstractType
      */
     public function lt(Expression $expression, array $pattern)
     {
-        return $this->callMethod('range', $pattern, [__FUNCTION__ => array_first($expression->values)]);
+        return $this->callMethod('range', $pattern, [__FUNCTION__ => Arr::first($expression->values)]);
     }
 
     /**
@@ -138,7 +139,7 @@ class Text extends AbstractType
      */
     public function lte(Expression $expression, array $pattern)
     {
-        return $this->callMethod('range', $pattern, [__FUNCTION__ => array_first($expression->values)]);
+        return $this->callMethod('range', $pattern, [__FUNCTION__ => Arr::first($expression->values)]);
     }
 
     /**
@@ -149,7 +150,7 @@ class Text extends AbstractType
      */
     public function gt(Expression $expression, array $pattern)
     {
-        return $this->callMethod('range', $pattern, [__FUNCTION__ => array_first($expression->values)]);
+        return $this->callMethod('range', $pattern, [__FUNCTION__ => Arr::first($expression->values)]);
     }
 
     /**
@@ -160,7 +161,7 @@ class Text extends AbstractType
      */
     public function gte(Expression $expression, array $pattern)
     {
-        return $this->callMethod('range', $pattern, [__FUNCTION__ => array_first($expression->values)]);
+        return $this->callMethod('range', $pattern, [__FUNCTION__ => Arr::first($expression->values)]);
     }
 
     /**

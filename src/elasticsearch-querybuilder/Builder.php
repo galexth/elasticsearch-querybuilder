@@ -3,6 +3,7 @@
 namespace Galexth\QueryBuilder;
 
 use Elastica\Query\BoolQuery;
+use Illuminate\Support\Str;
 
 class Builder
 {
@@ -134,7 +135,7 @@ class Builder
 
                 $type = $this->getTypeObject(ucfirst($pattern['type']));
 
-                if (! method_exists($type, ($method = camel_case($item->operator)))) {
+                if (! method_exists($type, ($method = Str::camel($item->operator)))) {
                     throw new BuilderException("Unknown operator '{$item->operator}' in type '{$pattern['type']}'.");
                 }
 

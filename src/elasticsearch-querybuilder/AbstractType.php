@@ -4,7 +4,6 @@ namespace Galexth\QueryBuilder;
 
 
 use Carbon\Carbon;
-use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\Exists;
 use Elastica\Query\Match;
@@ -14,6 +13,7 @@ use Elastica\Query\Nested;
 use Elastica\Query\Range;
 use Elastica\Query\Term;
 use Elastica\Query\Terms;
+use Illuminate\Support\Str;
 
 abstract class AbstractType
 {
@@ -135,7 +135,7 @@ abstract class AbstractType
      */
     protected function getMethod(string $type)
     {
-        return 'get'.camel_case($type).'Query';
+        return 'get'.Str::camel($type).'Query';
     }
 
     /**
